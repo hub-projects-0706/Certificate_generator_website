@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Certify — Admin Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="wrap">
+
+    <header class="letterhead">
+      <div class="mark">
+        <div class="seal-mini">C</div>
+        <div class="brand-text">
+          <div class="eyebrow">Certificate Registry</div>
+          <h1>Certify — Admin</h1>
+        </div>
+      </div>
+      <nav>
+        <a href="index.html">← Student Page</a>
+      </nav>
+    </header>
+
+    <!-- LOGIN SCREEN -->
+    <section id="loginScreen">
+      <div class="login-shell">
+        <div class="panel">
+          <div class="tag-row">
+            <span class="tag">Restricted</span>
+            <span class="tag">Admin Only</span>
+          </div>
+          <h2 style="font-family:var(--font-display); font-size:24px; margin-bottom:6px;">Admin Sign In</h2>
+          <p style="font-size:13px; color:#6b6355; margin-bottom:24px;"><strong></strong>
+            / <strong></strong></p>
+          <form id="loginForm">
+            <div class="field">
+              <label for="loginId">Login ID</label>
+              <input type="text" id="loginId" autocomplete="off" required>
+            </div>
+            <div class="field">
+              <label for="loginPass">Password</label>
+              <input type="password" id="loginPass" autocomplete="off" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Sign In</button>
+          </form>
+          <div class="status-msg" id="loginMsg"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN DASHBOARD -->
+    <section id="dashScreen" class="hidden">
+
+      <div class="hero" style="padding-top:0;">
+        <div class="kicker">Console</div>
+        <h2 style="font-size:32px;">Set up certificates</h2>
+        <p>Upload your roster and template, then position the fields. Everything is saved to this browser for the demo —
+          swap in a real backend for production use.</p>
+      </div>
+
+      <div class="admin-grid">
+        <!-- LEFT: steps -->
+        <div style="display:flex; flex-direction:column; gap:20px;">
+
+          <div class="step-panel">
+            <h3><span class="step-num">1</span> Upload Roster</h3>
+            <p class="desc">Excel file (.xlsx / .csv) with columns <strong>UID</strong> and <strong>Name</strong>.</p>
+            <div class="dropzone" id="excelDrop">
+              <strong>Click to upload</strong> or drag file here<br>
+              <input type="file" id="excelInput" accept=".xlsx,.xls,.csv">
+            </div>
+            <div class="file-chip" id="excelChip">
+              <span id="excelFileName"></span>
+              <button type="button" id="excelClear">✕</button>
+            </div>
+            <div class="small-note" id="rosterCount"></div>
+          </div>
+
+          <div class="step-panel">
+            <h3><span class="step-num">2</span> Upload Template</h3>
+            <p class="desc">Certificate background image (PNG/JPG). This is what fields get placed on.</p>
+            <div class="dropzone" id="tplDrop">
+              <strong>Click to upload</strong> or drag file here<br>
+              <input type="file" id="tplInput" accept="image/*">
+            </div>
+            <div class="file-chip" id="tplChip">
+              <span id="tplFileName"></span>
+              <button type="button" id="tplClear">✕</button>
+            </div>
+          </div>
+
+          <div class="step-panel">
+            <h3><span class="step-num">3</span> Position Fields</h3>
+            <p class="desc">Drag boxes onto the template. Use the dropdown to add more fields from your roster columns.
+            </p>
+            <div class="control-row" style="margin-top:0;">
+              <select id="addFieldSelect">
+                <option value="">+ Add field…</option>
+              </select>
+            </div>
+            <div class="small-note">Selected field: <strong id="selectedFieldLabel">none</strong></div>
+            <div class="control-row" id="styleControls" style="display:none;">
+              <label>Size <input type="range" id="fontSizeRange" min="10" max="120" value="36"></label>
+              <label>Color <input type="color" id="fontColorInput" value="#1b2a24"></label>
+              <label>Font
+                <select id="fontFamilySelect">
+                  <option value="'Fraunces', serif">Fraunces</option>
+                  <option value="'Inter', sans-serif">Inter</option>
+                  <option value="'JetBrains Mono', monospace">Mono</option>
+                  <option value="Georgia, serif">Georgia</option>
+                </select>
+              </label>
+              <label>Align
+                <select id="fontAlignSelect">
+                  <option value="center">Center</option>
+                  <option value="left">Left</option>
+                  <option value="right">Right</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="step-panel">
+            <h3><span class="step-num">4</span> Publish</h3>
+            <p class="desc">Save this layout so students can generate certificates on the main page.</p>
+            <button class="btn btn-primary" id="saveLayoutBtn">Save Template & Roster</button>
+            <div class="status-msg" id="saveMsg"></div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: canvas editor + roster preview -->
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          <div class="editor-stage">
+            <div class="editor-canvas-wrap" id="editorCanvasWrap">
+              <canvas id="tplCanvas"></canvas>
+            </div>
+            <p class="small-note" id="editorHint">Upload a template image to begin placing fields.</p>
+          </div>
+
+          <div class="step-panel">
+            <h3 style="font-size:16px;">Roster Preview</h3>
+            <div style="max-height:260px; overflow:auto;">
+              <table class="roster" id="rosterTable">
+                <thead>
+                  <tr>
+                    <th>UID</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="rosterBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <footer>Certify · Admin Console · Data stored locally in this browser (localStorage)</footer>
+  </div>
+
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <script src="template-store.js"></script>
+  <script src="admin.js"></script>
+</body>
+
+</html>

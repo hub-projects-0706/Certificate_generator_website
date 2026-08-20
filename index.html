@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Certify — Retrieve Your Certificate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="wrap">
+
+    <header class="letterhead">
+      <div class="mark">
+        <div class="seal-mini">C</div>
+        <div class="brand-text">
+          <div class="eyebrow">Certificate Registry</div>
+          <h1>Certify</h1>
+        </div>
+      </div>
+      <nav>
+        <a href="admin.html">Admin Login →</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="kicker">Verified Issuance System</div>
+      <h2>Retrieve your certificate</h2>
+      <p>Enter your Unique ID (UID) and full name exactly as registered by your event or program organizer, and your
+        certificate will be generated instantly.</p>
+    </section>
+
+    <div class="panel" style="max-width:520px; margin:0 auto;">
+      <form id="lookupForm">
+        <div class="field">
+          <label for="uid">Participant UID</label>
+          <input type="text" id="uid" placeholder="e.g. PEC-2026-0143" autocomplete="off" required>
+          <div class="hint">This is the ID shared with you by the organizer.</div>
+        </div>
+        <div class="field">
+          <label for="fullname">Full Name</label>
+          <input type="text" id="fullname" placeholder="As it should appear on the certificate" autocomplete="off"
+            required>
+        </div>
+        <button type="submit" class="btn btn-primary" id="genBtn">Generate Certificate</button>
+      </form>
+      <div class="status-msg" id="statusMsg"></div>
+    </div>
+
+    <div class="cert-stage" id="certStage">
+      <div class="divider">Your Certificate</div>
+      <div class="cert-canvas-wrap">
+        <canvas id="certCanvas"></canvas>
+      </div>
+      <div class="cert-actions">
+        <button class="btn btn-primary" id="downloadBtn">Download PNG</button>
+        <button class="btn btn-secondary" id="printBtn">Print</button>
+      </div>
+    </div>
+
+    <footer>Certify · No data leaves your browser · Records are demo/local storage only</footer>
+  </div>
+
+  <script src="template-store.js"></script>
+  <script src="student.js"></script>
+</body>
+
+</html>
