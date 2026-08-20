@@ -13,15 +13,19 @@ function showStatus(text, type) {
   statusMsg.className = 'status-msg show ' + type;
 }
 
-lookupForm.addEventListener('submit', (e) => {
+lookupForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const uid = document.getElementById('uid').value.trim();
   const fullname = document.getElementById('fullname').value.trim();
 
+  genBtn.disabled = true;
+  await CertifyStore.loadPublished();
+
   if (!CertifyStore.isPublished()) {
     showStatus('No certificates have been published yet. Please check back later or contact the organizer.', 'err');
     certStage.classList.remove('show');
+    genBtn.disabled = false;
     return;
   }
 
@@ -34,7 +38,6 @@ lookupForm.addEventListener('submit', (e) => {
   }
 
   showStatus('Match found — rendering your certificate…', 'ok');
-  genBtn.disabled = true;
   renderCertificate(record).then(() => {
     genBtn.disabled = false;
     certStage.classList.add('show');

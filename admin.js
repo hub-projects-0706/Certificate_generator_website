@@ -464,7 +464,7 @@ function selectField(key, redraw = true) {
 
 // ---------- Publish ----------
 function setupPublish() {
-  document.getElementById('saveLayoutBtn').addEventListener('click', () => {
+  document.getElementById('saveLayoutBtn').addEventListener('click', async () => {
     const saveMsg = document.getElementById('saveMsg');
 
     if (!templateImg) {
@@ -492,10 +492,17 @@ function setupPublish() {
       fontSize: f.fontSize * scaleFactor
     }));
 
-    CertifyStore.saveTemplateImage(templateImg.src, { w: templateImg.width, h: templateImg.height });
-    CertifyStore.saveFields(scaledFields);
-    CertifyStore.saveRoster(roster);
-
-    showStatus(saveMsg, `Published. ${roster.length} records and ${fields.length} field(s) are live on the student page.`, 'ok');
+    try {
+      await CertifyStore.publish({
+        image: templateImg.src,
+        dims: { w: templateImg.width, h: templateImg.height },
+        fields: scaledFields,
+        roster
+      });
+      showStatus(saveMsg, `Published. ${roster.length} records and ${fields.length} field(s) are live on the student page.`, 'ok');
+    } catch (error) {
+      showStatus(saveMsg, 'Could not publish to Netlify. Check the deployment and try again.', 'err');
+      console.error(error);
+    }
   });
 }

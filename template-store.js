@@ -1,9 +1,7 @@
 /**
  * template-store.js
- * Shared "backend" for the demo — persists everything to localStorage
- * so the Admin page and Student page can talk to each other without a server.
- *
- * Swap this module out for real API calls when connecting a backend.
+ * Shared certificate store. Netlify Blobs is the shared source in production;
+ * localStorage remains a cache and fallback for local testing.
  */
 
 const CertifyStore = (() => {
@@ -65,11 +63,39 @@ const CertifyStore = (() => {
     return !!(getTemplateImage() && getFields().length && getRoster().length);
   }
 
+  async function loadPublished() {
+    try {
+      const response = await fetch('/.netlify/functions/certify-data', { cache: 'no-store' });
+      if (!response.ok) throw new Error(`Publish data request failed: ${response.status}`);
+      const data = await response.json();
+      if (data.image && data.fields?.length && data.roster?.length) {
+        saveTemplateImage(data.image, data.dims);
+        saveFields(data.fields);
+        saveRoster(data.roster);
+      }
+    } catch (error) {
+      console.warn('Using locally cached certificate data.', error);
+    }
+    return isPublished();
+  }
+
+  async function publish(data) {
+    const response = await fetch('/.netlify/functions/certify-data', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!response.ok) throw new Error('Could not publish certificate data.');
+    saveTemplateImage(data.image, data.dims);
+    saveFields(data.fields);
+    saveRoster(data.roster);
+  }
+
   return {
     KEYS,
     saveTemplateImage, getTemplateImage, getTemplateDims,
     saveFields, getFields,
     saveRoster, getRoster, findRosterEntry,
-    clearAll, isPublished
+    clearAll, isPublished, loadPublished, publish
   };
 })();
